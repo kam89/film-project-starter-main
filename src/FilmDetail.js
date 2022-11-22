@@ -5,6 +5,7 @@ function FilmDetail(props) {
     title,
     poster_path,
     backdrop_path,
+    tagline,
     overview,
     release_date,
   } = props;
@@ -18,6 +19,8 @@ function FilmDetail(props) {
       <div className="film-meta">
         <p className="film-detail-overview">
           <img src={'https://image.tmdb.org/t/p/w780/' + poster_path} className="film-detail-poster" alt={'Baby driver poster'} />
+          {tagline}
+          <br /><br />
           {overview}
         </p>
       </div>
