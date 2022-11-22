@@ -4,6 +4,7 @@ import './FilmLibrary.css';
 import FilmRow from "./FilmRow";
 import { TMDB, TMDB_API_KEY } from "./TMDB";
 
+const years = [2022, 2021, 2020];
 
 function FilmLibrary() {
 
@@ -12,6 +13,8 @@ function FilmLibrary() {
   const [selectedFilm, setSelectedFilm] = useState(null);
   const [favourite, setFavourite] = useState([]);
   const [isFavouriteView, setIsFavouriteView] = useState(false);
+  const [page, setPage] = useState(1);
+  const [year, setYear] = useState(years[0]);
 
   const handleonSelect = (film) => {
     const url = `https://api.themoviedb.org/3/movie/${film.id}?api_key=${TMDB_API_KEY}&language=en-US`;
@@ -23,10 +26,12 @@ function FilmLibrary() {
   };
 
   const loadMore = () => {
-    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_watch_monetization_types=flatrate&primary_release_year=2022`;
+    const url = `https://api.themoviedb.org/3/discover/movie?api_key=${TMDB_API_KEY}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${page}&with_watch_monetization_types=flatrate&primary_release_year=${year}`;
     fetch(url).then((response) => {
       response.json().then((data) => {
-        setFilms(data.results);
+        const newFilmsList = [...films, ...data.results];
+        setFilms(newFilmsList);
+        setPage(page + 1);
       });
     });
   };
@@ -56,10 +61,21 @@ function FilmLibrary() {
     setIsFavouriteView(value);
   };
 
+  const handleChangeYear = (event) => {
+    setYear(event.target.value);
+    setFilms([]);
+    setPage(1);
+  };
+
   return (
     <div className="FilmLibrary">
       <div className="film-list">
         <h1 className="section-title">FILMS</h1>
+        <div className="section-title">
+          <select onChange={handleChangeYear} name="year">
+            {years.map((item, index) => <option value={item}>{item}</option>)}
+          </select>
+        </div>
         <div className="film-list-filters">
           <button className={!isFavouriteView ? "film-list-filter is-active" : "film-list-filter"} onClick={() => handleChangeView(false)}>
             ALL
